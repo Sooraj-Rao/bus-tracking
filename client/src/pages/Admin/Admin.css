@@ -1,0 +1,351 @@
+.admin-page {
+  padding: 2rem 0;
+}
+
+.admin-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.admin-title {
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.admin-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+}
+
+.admin-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  background: white;
+  border-radius: 15px;
+  padding: 0.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 800px; /* Increased max-width for more tabs */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tab-button {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  color: #7f8c8d;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.tab-button.active {
+  background: #3498db;
+  color: white;
+}
+
+.tab-button:hover:not(.active) {
+  background: #f8f9fa;
+  color: #2c3e50;
+}
+
+.admin-content {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.section-title {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.submit-button {
+  grid-column: 1 / -1;
+  background: linear-gradient(90deg, #27ae60, #2ecc71);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.submit-button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.buses-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.buses-table th,
+.buses-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.buses-table th {
+  background: #f8f9fa;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.buses-table tr:hover {
+  background: #f8f9fa;
+}
+
+.action-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.edit-button {
+  background: #f39c12;
+  color: white;
+}
+
+.edit-button:hover {
+  background: #e67e22;
+}
+
+.delete-button {
+  background: #e74c3c;
+  color: white;
+}
+
+.delete-button:hover {
+  background: #c0392b;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.no-data {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 3rem;
+}
+
+/* Styles for Waypoint Input Group */
+.waypoint-input-group {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto auto; /* Name, Lat, Lng, Get Coords, Remove */
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.waypoint-input-group input {
+  padding: 0.6rem;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.waypoint-input-group input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.waypoint-input-group input[readOnly] {
+  background-color: #e9ecef; /* Indicate read-only */
+  cursor: not-allowed;
+}
+
+.add-waypoint-button,
+.remove-waypoint-button,
+.get-coords-button { /* Added .get-coords-button */
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.add-waypoint-button {
+  background: #27ae60;
+  color: white;
+  grid-column: 1 / -1; /* Span full width */
+  margin-top: 0.5rem;
+}
+
+.add-waypoint-button:hover {
+  background: #219a52;
+}
+
+.remove-waypoint-button {
+  background: #e74c3c;
+  color: white;
+  width: 35px; /* Fixed width for the minus button */
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.remove-waypoint-button:hover {
+  background: #c0392b;
+}
+
+.get-coords-button { /* New button style */
+  background: #3498db;
+  color: white;
+  width: 100%; /* Adjust width as needed */
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
+}
+
+.get-coords-button:hover {
+  background: #2980b9;
+}
+
+@media (max-width: 768px) {
+  .admin-tabs {
+    flex-direction: column;
+    max-width: none;
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+
+  .buses-table {
+    font-size: 0.9rem;
+  }
+
+  .buses-table th,
+  .buses-table td {
+    padding: 0.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .waypoint-input-group {
+    grid-template-columns: 1fr; /* Stack inputs on small screens */
+  }
+
+  .waypoint-input-group input {
+    width: 100%;
+  }
+
+  .remove-waypoint-button,
+  .get-coords-button { /* Adjust for small screens */
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}

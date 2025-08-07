@@ -1,0 +1,82 @@
+.map-container {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin: 2rem 0;
+}
+
+.map-header {
+  background: linear-gradient(90deg, #3498db, #2980b9);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+.map-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.leaflet-container {
+  height: 500px;
+  width: 100%;
+}
+
+.bus-popup {
+  text-align: center;
+}
+
+.bus-popup strong {
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.bus-popup .bus-info {
+  margin: 0.5rem 0;
+  color: #7f8c8d;
+}
+
+.bus-popup .coordinates {
+  font-size: 0.9rem;
+  color: #95a5a6;
+}
+
+.map-controls {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.control-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.control-button:hover {
+  background: #2980b9;
+}
+
+.control-button.active {
+  background: #e74c3c;
+}
+
+@media (max-width: 768px) {
+  .leaflet-container {
+    height: 400px;
+  }
+
+  .map-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+}
