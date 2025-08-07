@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import {
   createContext,
   useContext,
@@ -19,20 +18,19 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Stores user data if logged in
-  const [isAdmin, setIsAdmin] = useState(false); // True if admin is logged in
-  const [loading, setLoading] = useState(true); // To indicate initial auth check is complete
-  const navigate = useNavigate();
+export const setAuthHeader = (token) => {
+  if (token) {
+    axios.defaults.headers.common["x-auth-token"] = token;
+  } else {
+    delete axios.defaults.headers.common["x-auth-token"];
+  }
+};
 
-  // Function to set Axios default header for authenticated requests
-  const setAuthHeader = useCallback((token) => {
-    if (token) {
-      axios.defaults.headers.common["x-auth-token"] = token;
-    } else {
-      delete axios.defaults.headers.common["x-auth-token"];
-    }
-  }, []);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -41,13 +39,10 @@ export const AuthProvider = ({ children }) => {
 
       if (userToken) {
         try {
-          // In a real app, you'd verify this token with a backend endpoint
-          // For now, we'll just decode it on the client (less secure but works for demo)
-          // Or, make a simple /api/auth/me endpoint to verify and return user data
           setAuthHeader(userToken);
-          const res = await axios.get("http://localhost:5000/api/auth/me"); // New endpoint needed
+          const res = await axios.get("http://localhost:5000/api/auth/me");
           setUser(res.data.user);
-          setIsAdmin(false); // A regular user is not an admin
+          setIsAdmin(false);
         } catch (error) {
           console.error("User token invalid or expired:", error);
           localStorage.removeItem("userToken");
@@ -58,11 +53,9 @@ export const AuthProvider = ({ children }) => {
       if (adminToken) {
         try {
           setAuthHeader(adminToken);
-          // Admin token verification is handled by the backend middleware on protected routes
-          // We can make a simple call to a protected admin route to check validity
-          await axios.get("http://localhost:5000/api/buses"); // Example protected admin route
+          await axios.get("http://localhost:5000/api/buses");
           setIsAdmin(true);
-          setUser(null); // Admin is not a regular user in this context
+          setUser(null);
         } catch (error) {
           console.error("Admin token invalid or expired:", error);
           localStorage.removeItem("adminToken");
@@ -102,11 +95,11 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     isAdmin,
-    isAuthenticated: !!user || isAdmin, // True if either user or admin is logged in
+    isAuthenticated: !!user || isAdmin,
     loading,
     login,
     logout,
-    setAuthHeader, // Expose this for direct use if needed
+    setAuthHeader,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

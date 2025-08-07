@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useNotification } from "../../components/NotificationProvider/NotificationProvider"
-import { useAuth } from "../../context/AuthContext" // Import useAuth
+import { useAuth } from "../../context/AuthContext" 
 import "./Auth.css"
 
 const LoginPage = () => {
@@ -15,7 +15,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const { showSuccess, showError } = useNotification()
-  const { login } = useAuth() // Get login function from AuthContext
+  const { login } = useAuth() 
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -26,9 +26,9 @@ const LoginPage = () => {
     setLoading(true)
     try {
       const res = await axios.post("http://localhost:5000/api/auth/login", form)
-      login(res.data.token, res.data.user); // Use AuthContext login function
+      login(res.data.token, res.data.user); 
       showSuccess("Login Successful!", `Welcome back, ${res.data.user.userName || res.data.user.email}!`)
-      navigate("/") // Redirect to home or dashboard
+      navigate("/") 
     } catch (error) {
       console.error("Login failed:", error)
       showError("Login Failed", error.response?.data?.message || "Invalid email or password.")

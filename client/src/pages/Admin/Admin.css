@@ -1,78 +1,82 @@
 .admin-page {
-  padding: 2rem 0;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background: #f4f6f9;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .admin-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
 }
 
 .admin-title {
-  color: white;
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.admin-subtitle {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.2rem;
+  color: #2c3e50;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
 .admin-tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 2rem;
-  background: white;
-  border-radius: 15px;
+  gap: 0.5rem;
+  background: #ffffff;
+  border-radius: 12px;
   padding: 0.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  max-width: 800px; /* Increased max-width for more tabs */
-  margin-left: auto;
-  margin-right: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
 
 .tab-button {
   flex: 1;
+  min-width: 120px;
   background: none;
   border: none;
-  padding: 1rem;
-  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7280;
   transition: all 0.3s ease;
-  font-weight: bold;
-  color: #7f8c8d;
-  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .tab-button.active {
-  background: #3498db;
-  color: white;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
 }
 
 .tab-button:hover:not(.active) {
-  background: #f8f9fa;
-  color: #2c3e50;
+  background: #f1f5f9;
+  color: #1e40af;
 }
 
 .admin-content {
-  background: white;
-  border-radius: 15px;
+  background: #ffffff;
+  border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
-  color: #2c3e50;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
+  color: #1f2937;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
 .admin-form {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -82,270 +86,279 @@
 }
 
 .form-label {
-  font-weight: bold;
-  color: #2c3e50;
+  font-weight: 600;
+  color: #374151;
   margin-bottom: 0.5rem;
+  font-size: 0.95rem;
 }
 
-.form-input {
+.form-input, .form-input select {
   padding: 0.75rem;
-  border: 2px solid #e9ecef;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form-input:focus {
+.form-input:focus, .form-input select:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.submit-button {
-  grid-column: 1 / -1;
-  background: linear-gradient(90deg, #27ae60, #2ecc71);
-  color: white;
+.submit-button, .cancel-button, .add-waypoint-button, .remove-waypoint-button, .get-coords-button {
+  padding: 0.75rem 1.5rem;
   border: none;
-  padding: 1rem 2rem;
   border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
+.submit-button {
+  background: #16a34a;
+  color: #ffffff;
+}
+
 .submit-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  background: #15803d;
+  transform: translateY(-1px);
 }
 
 .submit-button:disabled {
-  background: #bdc3c7;
+  background: #9ca3af;
   cursor: not-allowed;
-  transform: none;
+}
+
+.cancel-button {
+  background: #dc2626;
+  color: #ffffff;
+  margin-left: 0.5rem;
+}
+
+.cancel-button:hover {
+  background: #b91c1c;
 }
 
 .buses-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 2rem;
-  background: white;
-  border-radius: 10px;
+  background: #ffffff;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.buses-table th,
-.buses-table td {
+.buses-table th, .buses-table td {
   padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .buses-table th {
-  background: #f8f9fa;
-  font-weight: bold;
-  color: #2c3e50;
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
 }
 
 .buses-table tr:hover {
-  background: #f8f9fa;
+  background: #f1f5f9;
 }
 
 .action-button {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
   margin-right: 0.5rem;
-  transition: all 0.3s ease;
 }
 
 .edit-button {
-  background: #f39c12;
-  color: white;
+  background: #f59e0b;
+  color: #ffffff;
 }
 
 .edit-button:hover {
-  background: #e67e22;
+  background: #d97706;
 }
 
 .delete-button {
-  background: #e74c3c;
-  color: white;
+  background: #dc2626;
+  color: #ffffff;
 }
 
 .delete-button:hover {
-  background: #c0392b;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.stat-number {
-  font-size: 2.5rem;
-  font-weight: bold;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  font-size: 1rem;
-  opacity: 0.9;
+  background: #b91c1c;
 }
 
 .no-data {
   text-align: center;
-  color: #7f8c8d;
+  color: #6b7280;
   font-style: italic;
-  padding: 3rem;
+  padding: 2rem;
+  font-size: 1rem;
 }
 
-/* Styles for Waypoint Input Group */
+
 .waypoint-input-group {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto auto; /* Name, Lat, Lng, Get Coords, Remove */
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  grid-template-columns: 3fr 1fr 1fr 80px;
+  gap: 0.75rem;
   align-items: center;
-  background: #f8f9fa;
+  background: #f9fafb;
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border: 1px solid #e5e7eb;
+  position: relative;
 }
 
 .waypoint-input-group input {
-  padding: 0.6rem;
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-  font-size: 0.9rem;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 
 .waypoint-input-group input:focus {
-  outline: none;
-  border-color: #3498db;
-}
-
-.waypoint-input-group input[readOnly] {
-  background-color: #e9ecef; /* Indicate read-only */
-  cursor: not-allowed;
-}
-
-.add-waypoint-button,
-.remove-waypoint-button,
-.get-coords-button { /* Added .get-coords-button */
-  padding: 0.6rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s ease;
-  font-size: 0.9rem;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .add-waypoint-button {
-  background: #27ae60;
-  color: white;
-  grid-column: 1 / -1; /* Span full width */
+  background: rgb(98, 98, 247);
+  color: #ffffff;
+  width: fit-content;
+  grid-column: 1 / -1;
   margin-top: 0.5rem;
 }
 
 .add-waypoint-button:hover {
-  background: #219a52;
+  background: #2535e4;
 }
 
 .remove-waypoint-button {
-  background: #e74c3c;
-  color: white;
-  width: 35px; /* Fixed width for the minus button */
-  height: 35px;
+  background: #dc2626;
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  font-size: 1.2rem;
 }
 
 .remove-waypoint-button:hover {
-  background: #c0392b;
+  background: #b91c1c;
 }
 
-.get-coords-button { /* New button style */
-  background: #3498db;
-  color: white;
-  width: 100%; /* Adjust width as needed */
-  height: 35px;
+.get-coords-button {
+  background: #2563eb;
+  color: #ffffff;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 0.5rem;
 }
 
 .get-coords-button:hover {
-  background: #2980b9;
+  background: #1e40af;
 }
 
-@media (max-width: 768px) {
-  .admin-tabs {
-    flex-direction: column;
-    max-width: none;
-  }
 
+.suggestions-list {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  z-index: 1000;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.suggestions-list li {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #374151;
+  transition: background 0.2s ease;
+}
+
+.suggestions-list li:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.suggestions-list li:last-child {
+  border-bottom: none;
+}
+
+
+@media (max-width: 1024px) {
   .admin-form {
     grid-template-columns: 1fr;
   }
 
-  .buses-table {
-    font-size: 0.9rem;
-  }
-
-  .buses-table th,
-  .buses-table td {
-    padding: 0.5rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .waypoint-input-group {
-    grid-template-columns: 1fr; /* Stack inputs on small screens */
+    grid-template-columns: 1fr;
   }
 
-  .waypoint-input-group input {
-    width: 100%;
-  }
-
+  .waypoint-input-group input,
   .remove-waypoint-button,
-  .get-coords-button { /* Adjust for small screens */
+  .get-coords-button {
     width: 100%;
     margin-top: 0.5rem;
   }
 }
 
+@media (max-width: 768px) {
+  .admin-tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.cancel-button {
-  background-color: #dc3545;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 1rem;
+  .tab-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .admin-title {
+    font-size: 1.75rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .buses-table th, .buses-table td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
 }
 
-.cancel-button:hover {
-  background-color: #c82333;
+@media (max-width: 480px) {
+  .admin-page {
+    padding: 1rem;
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
+
+  .submit-button, .cancel-button {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .suggestions-list {
+    max-height: 180px;
+  }
 }

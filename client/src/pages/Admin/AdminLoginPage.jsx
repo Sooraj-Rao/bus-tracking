@@ -4,8 +4,8 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useNotification } from "../../components/NotificationProvider/NotificationProvider"
-import { useAuth } from "../../context/AuthContext" // Import useAuth
-import "../Auth/Auth.css" // Reusing Auth.css for styling
+import { useAuth } from "../../context/AuthContext" 
+import "../Auth/Auth.css" 
 
 const AdminLoginPage = () => {
   const [form, setForm] = useState({
@@ -15,7 +15,7 @@ const AdminLoginPage = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const { showSuccess, showError } = useNotification()
-  const { login } = useAuth() // Get login function from AuthContext
+  const { login } = useAuth() 
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -26,9 +26,9 @@ const AdminLoginPage = () => {
     setLoading(true)
     try {
       const res = await axios.post("http://localhost:5000/api/admin/auth/login", form)
-      login(res.data.token, null, true); // Use AuthContext login function, pass true for isAdminUser
+      login(res.data.token, null, true); 
       showSuccess("Admin Login Successful!", "Welcome to the Admin Panel!")
-      navigate("/admin") // Redirect to admin dashboard
+      navigate("/admin")
     } catch (error) {
       console.error("Admin login failed:", error)
       showError("Login Failed", error.response?.data?.message || "Invalid admin credentials.")

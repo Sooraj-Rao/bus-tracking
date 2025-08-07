@@ -2,12 +2,12 @@ const express = require("express")
 const router = express.Router()
 const Bus = require("../models/Bus")
 
-// Route optimization endpoint
+
 router.post("/optimize", async (req, res) => {
   try {
     const { startLocation, endLocation, selectedRoute, optimizationGoal, trafficCondition } = req.body
 
-    // Simulate route optimization algorithm
+    
     const buses = await Bus.find()
     let filteredBuses = buses
 
@@ -15,7 +15,7 @@ router.post("/optimize", async (req, res) => {
       filteredBuses = buses.filter((bus) => bus.routeName === selectedRoute)
     }
 
-    // Calculate optimization metrics based on parameters
+    
     const baseTime = 45
     const baseFuel = 12.5
     const baseDistance = 25.8
@@ -100,10 +100,10 @@ router.post("/optimize", async (req, res) => {
   }
 })
 
-// Get traffic data
+
 router.get("/traffic", async (req, res) => {
   try {
-    // Simulate traffic data
+    
     const trafficData = {
       currentCondition: ["light", "normal", "heavy"][Math.floor(Math.random() * 3)],
       averageSpeed: Math.floor(Math.random() * 20) + 30,

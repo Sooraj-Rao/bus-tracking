@@ -7,7 +7,6 @@ import axios from "axios";
 import "leaflet/dist/leaflet.css";
 import "./MapComponent.css";
 
-// Fix for default markers
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:

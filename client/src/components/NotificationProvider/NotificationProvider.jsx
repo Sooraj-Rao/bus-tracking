@@ -29,7 +29,6 @@ const NotificationProvider = ({ children }) => {
 
     setNotifications((prev) => [...prev, newNotification])
 
-    // Auto remove after 5 seconds
     setTimeout(() => {
       removeNotification(id)
     }, 5000)

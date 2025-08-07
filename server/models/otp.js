@@ -4,7 +4,7 @@ const otpSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true, // Only one active OTP per email
+        unique: true, 
     },
     otp: {
         type: String,
@@ -13,7 +13,7 @@ const otpSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        expires: 300, // OTP expires after 5 minutes (300 seconds)
+        expires: 300, 
     },
 });
 

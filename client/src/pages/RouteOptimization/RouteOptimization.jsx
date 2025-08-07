@@ -51,7 +51,6 @@ const RouteOptimization = () => {
     showInfo("Processing", "Analyzing traffic patterns and optimizing routes...")
 
     try {
-      // Call the backend optimization endpoint
       const res = await axios.post("http://localhost:5000/api/optimization/optimize", optimizationParams);
       setOptimizationResults(res.data);
       showSuccess("Optimization Complete!", "Route suggestions generated successfully");

@@ -1,5 +1,6 @@
 import React from "react";
 import "./home.css";
+import { useAuth } from "../../context/AuthContext";
 
 const Footer = () => (
   <footer className="footer">
@@ -36,12 +37,12 @@ const Footer = () => (
     </div>
     <div className="footer-bottom">
       <p>&copy; 2025 BusTrack. All rights reserved.</p>
-    
     </div>
   </footer>
 );
 
 const Home = () => {
+  const { isAdmin, isAuthenticated } = useAuth();
   return (
     <div className="home-container">
       <main className="main">
@@ -52,10 +53,20 @@ const Home = () => {
             real-time tracking
           </p>
           <div className="hero-buttons">
-            <a href="/login" className="btn btn-primary">
+            <a
+              href={
+                isAdmin ? "/admin" : isAuthenticated ? "/booking" : "/login"
+              }
+              className="btn btn-primary"
+            >
               Book Now
             </a>
-            <a href="/login" className="btn btn-secondary">
+            <a
+              href={
+                isAdmin ? "/admin" : isAuthenticated ? "/tracking" : "/login"
+              }
+              className="btn btn-secondary"
+            >
               Track Your Bus
             </a>
           </div>
@@ -81,7 +92,10 @@ const Home = () => {
         </section>
         <section className="cta">
           <h3 className="section-title">Ready to Get Started?</h3>
-          <a href="/login" className="btn btn-primary">
+          <a
+            href={isAdmin ? "/admin" : isAuthenticated ? "/booking" : "/login"}
+            className="btn btn-primary"
+          >
             Start Now
           </a>
         </section>

@@ -28,7 +28,7 @@ const MapComponent = () => {
   }, []);
   return (
     <MapContainer
-      center={[28.6139, 77.2090]} // Default center of India
+      center={[28.6139, 77.2090]}
       zoom={13}
       style={{ height: '100vh', width: '100%' }}
     >

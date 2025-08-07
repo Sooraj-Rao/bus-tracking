@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useNotification } from "../../components/NotificationProvider/NotificationProvider";
 import { useAuth } from "../../context/AuthContext";
 import "./Admin.css";
 import AdminLoginPage from "./AdminLoginPage";
+
+const debounce = (func, delay) => {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), delay);
+  };
+};
 
 const Admin = () => {
   const { isAdmin, loading: authLoading, setAuthHeader } = useAuth();
@@ -24,8 +33,9 @@ const Admin = () => {
     waypoints: [{ name: "", lat: "", lng: "" }],
   });
   const [loading, setLoading] = useState(false);
-  const [editingBus, setEditingBus] = useState(null); // State for editing bus
-  const [editingRoute, setEditingRoute] = useState(null); // State for editing route
+  const [editingBus, setEditingBus] = useState(null);
+  const [editingRoute, setEditingRoute] = useState(null);
+  const [waypointSuggestions, setWaypointSuggestions] = useState({});
 
   const { showSuccess, showError, showInfo } = useNotification();
   const navigate = useNavigate();
@@ -81,10 +91,38 @@ const Admin = () => {
     });
   };
 
+  const fetchSuggestions = useCallback(async (index, query) => {
+    if (query.length < 2) {
+      setWaypointSuggestions((prev) => ({ ...prev, [index]: [] }));
+      return;
+    }
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/geocoding/geocode?address=${encodeURIComponent(
+          query
+        )}`
+      );
+      setWaypointSuggestions((prev) => ({ ...prev, [index]: res.data }));
+    } catch (error) {
+      console.error("Geocoding suggestions error:", error);
+      setWaypointSuggestions((prev) => ({ ...prev, [index]: [] }));
+    }
+  }, []);
+
+  const debouncedFetchSuggestions = useCallback(
+    debounce(fetchSuggestions, 500),
+    [fetchSuggestions]
+  );
+
   const handleWaypointChange = (index, e) => {
+    const { name, value } = e.target;
     const newWaypoints = [...routeForm.waypoints];
-    newWaypoints[index][e.target.name] = e.target.value;
+    newWaypoints[index][name] = value;
     setRouteForm({ ...routeForm, waypoints: newWaypoints });
+
+    if (name === "name") {
+      debouncedFetchSuggestions(index, value);
+    }
   };
 
   const addWaypoint = () => {
@@ -92,50 +130,38 @@ const Admin = () => {
       ...routeForm,
       waypoints: [...routeForm.waypoints, { name: "", lat: "", lng: "" }],
     });
+    setWaypointSuggestions((prev) => ({
+      ...prev,
+      [routeForm.waypoints.length]: [],
+    })); 
   };
 
   const removeWaypoint = (index) => {
     const newWaypoints = routeForm.waypoints.filter((_, i) => i !== index);
     setRouteForm({ ...routeForm, waypoints: newWaypoints });
+    setWaypointSuggestions((prev) => {
+      const newSuggestions = { ...prev };
+      delete newSuggestions[index];
+      const reindexedSuggestions = {};
+      Object.keys(newSuggestions).forEach((key, i) => {
+        if (parseInt(key) > index) {
+          reindexedSuggestions[parseInt(key) - 1] = newSuggestions[key];
+        } else {
+          reindexedSuggestions[key] = newSuggestions[key];
+        }
+      });
+      return reindexedSuggestions;
+    });
   };
 
-  const handleGetCoordinates = async (index) => {
-    const waypoint = routeForm.waypoints[index];
-    if (!waypoint.name) {
-      showError(
-        "Input Required",
-        "Please enter a place name to get coordinates."
-      );
-      return;
-    }
 
-    showInfo("Geocoding", `Fetching coordinates for "${waypoint.name}"...`);
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/geocoding/geocode?address=${encodeURIComponent(
-          waypoint.name
-        )}`
-      );
-      if (res.data.lat !== null && res.data.lng !== null) {
-        const newWaypoints = [...routeForm.waypoints];
-        newWaypoints[index].lat = res.data.lat.toFixed(6);
-        newWaypoints[index].lng = res.data.lng.toFixed(6);
-        setRouteForm({ ...routeForm, waypoints: newWaypoints });
-        showSuccess("Success", `Coordinates found for "${waypoint.name}"`);
-      } else {
-        showError(
-          "Not Found",
-          `Could not find coordinates for "${waypoint.name}". Try a more specific name.`
-        );
-      }
-    } catch (error) {
-      console.error("Geocoding error:", error);
-      showError(
-        "Geocoding Failed",
-        error.response?.data?.message ||
-          "Failed to get coordinates. Please try again."
-      );
-    }
+  const handleSelectSuggestion = (index, suggestion) => {
+    const newWaypoints = [...routeForm.waypoints];
+    newWaypoints[index].name = suggestion.address;
+    newWaypoints[index].lat = parseFloat(suggestion.lat).toFixed(6);
+    newWaypoints[index].lng = parseFloat(suggestion.lng).toFixed(6);
+    setRouteForm({ ...routeForm, waypoints: newWaypoints });
+    setWaypointSuggestions((prev) => ({ ...prev, [index]: [] })); 
   };
 
   const handleAddBus = async (e) => {
@@ -181,7 +207,7 @@ const Admin = () => {
       routeName: bus.routeName,
       contact: bus.contact,
     });
-    setActiveTab("add-bus"); // Switch to the add-bus tab for editing
+    setActiveTab("add-bus"); 
   };
 
   const handleUpdateBus = async (e) => {
@@ -273,7 +299,7 @@ const Admin = () => {
         routeName: "",
         waypoints: [{ name: "", lat: "", lng: "" }],
       });
-
+      setWaypointSuggestions({}); 
       fetchRoutes();
     } catch (error) {
       console.error("Error adding route:", error);
@@ -297,7 +323,8 @@ const Admin = () => {
         lng: wp.lng.toFixed(6),
       })),
     });
-    setActiveTab("manage-routes"); // Switch to the manage-routes tab for editing
+    setWaypointSuggestions({});
+    setActiveTab("manage-routes"); 
   };
 
   const handleUpdateRoute = async (e) => {
@@ -341,6 +368,7 @@ const Admin = () => {
         waypoints: [{ name: "", lat: "", lng: "" }],
       });
       setEditingRoute(null);
+      setWaypointSuggestions({}); 
       fetchRoutes();
     } catch (error) {
       console.error("Error updating route:", error);
@@ -481,7 +509,6 @@ const Admin = () => {
                 <th>Bus Name</th>
                 <th>Route</th>
                 <th>Contact</th>
-                <th>Location</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -494,10 +521,7 @@ const Admin = () => {
                   <td>{bus.busName}</td>
                   <td>{bus.routeName}</td>
                   <td>{bus.contact}</td>
-                  <td>
-                    {bus.currentLocation?.lat?.toFixed(4)},{" "}
-                    {bus.currentLocation?.lng?.toFixed(4)}
-                  </td>
+
                   <td>
                     <button
                       className="action-button edit-button"
@@ -550,44 +574,51 @@ const Admin = () => {
             <label className="form-label">Waypoints (Stops)</label>
             {routeForm.waypoints.map((waypoint, index) => (
               <div key={index} className="waypoint-input-group">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Stop Name (e.g., City Center)"
-                  value={waypoint.name}
-                  onChange={(e) => handleWaypointChange(index, e)}
-                  required
-                />
-                <input
-                  type="number"
-                  name="lat"
-                  placeholder="Latitude"
-                  step="any"
-                  value={waypoint.lat}
-                  onChange={(e) => handleWaypointChange(index, e)}
-                  required
-                  readOnly
-                />
-                <input
-                  type="number"
-                  name="lng"
-                  placeholder="Longitude"
-                  step="any"
-                  value={waypoint.lng}
-                  onChange={(e) => handleWaypointChange(index, e)}
-                  required
-                  readOnly
-                />
-                <button
-                  type="button"
-                  onClick={() => handleGetCoordinates(index)}
-                  className="get-coords-button"
-                >
-                  📍 Get Coords
-                </button>
+                <div style={{ position: "relative", flex: "2" }}>
+                  {" "}
+                  <input
+                    type="text"
+                    style={{ width: "100%" }}
+                    name="name"
+                    autocomplete="off"
+                    placeholder="Stop Name (e.g., Bengaluru)"
+                    value={waypoint.name}
+                    onChange={(e) => handleWaypointChange(index, e)}
+                    onBlur={() =>
+                      setTimeout(
+                        () =>
+                          setWaypointSuggestions((prev) => ({
+                            ...prev,
+                            [index]: [],
+                          })),
+                        200
+                      )
+                    }
+                    required
+                  />
+                  {waypointSuggestions[index] &&
+                    waypointSuggestions[index].length > 0 && (
+                      <ul className="suggestions-list">
+                        {waypointSuggestions[index].map(
+                          (suggestion, sIndex) => (
+                            <li
+                              key={sIndex}
+                              onMouseDown={() =>
+                                handleSelectSuggestion(index, suggestion)
+                              }
+                            >
+                              {suggestion.address}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    )}
+                </div>
+
                 {routeForm.waypoints.length > 1 && (
                   <button
                     type="button"
+                    style={{ marginLeft: "1rem" }}
                     onClick={() => removeWaypoint(index)}
                     className="remove-waypoint-button"
                   >
@@ -622,6 +653,7 @@ const Admin = () => {
                   routeName: "",
                   waypoints: [{ name: "", lat: "", lng: "" }],
                 });
+                setWaypointSuggestions({});
               }}
             >
               🚫 Cancel

@@ -1,27 +1,27 @@
 const express = require("express")
 const router = express.Router()
 const Bus = require("../models/Bus")
-const Route = require("../models/route") // Import the new Route model
+const Route = require("../models/route") 
 
-// Get all buses
+
 router.get("/", async (req, res) => {
   const buses = await Bus.find()
   res.json(buses)
 })
 
-// Post: add new bus with route initialization
+
 router.post("/", async (req, res) => {
   try {
     const busData = req.body
 
-    // Fetch route waypoints from the Route model based on routeName
+    
     const routeDefinition = await Route.findOne({ routeName: busData.routeName })
 
     if (!routeDefinition || routeDefinition.waypoints.length < 2) {
       return res.status(400).json({ message: "Selected route not found or has insufficient waypoints." })
     }
 
-    // Assign the waypoints from the found route definition
+    
     busData.routeWaypoints = routeDefinition.waypoints.map((point) => ({
       name: point.name,
       lat: point.lat,
@@ -31,10 +31,10 @@ router.post("/", async (req, res) => {
 
     busData.startPoint = routeDefinition.waypoints[0]
     busData.endPoint = routeDefinition.waypoints[routeDefinition.waypoints.length - 1]
-    busData.routeProgress = 0 // Start at beginning
-    busData.direction = 1 // Forward direction
+    busData.routeProgress = 0 
+    busData.direction = 1 
 
-    // Set initial current location to the start point of the route
+    
     busData.currentLocation = {
       lat: busData.startPoint.lat,
       lng: busData.startPoint.lng,
@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
   }
 })
 
-// Get a single bus by id
+
 router.get("/:id", async (req, res) => {
   try {
     const bus = await Bus.findById(req.params.id)
@@ -76,7 +76,7 @@ router.delete("/:id", async (req, res) => {
 })
 
 
-// In buses router
+
 router.put("/:id", async (req, res) => {
   try {
     const busData = req.body;
@@ -110,7 +110,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Get available routes (from the new Route model)
+
 router.get("/routes/available", async (req, res) => {
   try {
     const routes = await Route.find({}, "routeName waypoints").sort({ routeName: 1 })

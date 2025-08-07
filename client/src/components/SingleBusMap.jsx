@@ -19,7 +19,6 @@ const SingleBusMap = () => {
   const {busId} = useParams();
   const [bus, setBus] = useState(null);
 
-  //fetch latest location every 5 seconds
   useEffect(() => {
     const fetchBus = async () => {
       try {

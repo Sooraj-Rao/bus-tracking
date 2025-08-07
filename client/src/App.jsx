@@ -11,19 +11,19 @@ import LoginPage from "./pages/Auth/LoginPage"
 import RegisterPage from "./pages/Auth/RegisterPage"
 import AdminLoginPage from "./pages/Admin/AdminLoginPage"
 import NotificationProvider from "./components/NotificationProvider/NotificationProvider"
-import { AuthProvider, useAuth } from "./context/AuthContext" // Import AuthProvider and useAuth
+import { AuthProvider, useAuth } from "./context/AuthContext" 
 import "./App.css"
 
-// ProtectedRoute component
+
 const ProtectedRoute = ({ children, requiredRole }) => {
   const { isAuthenticated, isAdmin, loading } = useAuth()
 
   if (loading) {
-    return <div>Loading authentication...</div>; // Or a loading spinner
+    return <div>Loading authentication...</div>; 
   }
 
   if (requiredRole === "admin" && !isAdmin) {
-    return <Navigate to="/admin/login" replace />; // Redirect to admin login if not admin
+    return <Navigate to="/admin/login" replace />; 
   }
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -38,7 +38,7 @@ const App = () => {
   return (
     <NotificationProvider>
       <Router>
-        <AuthProvider> {/* Wrap the entire app with AuthProvider */}
+        <AuthProvider> 
           <div className="app">
             <Navbar />
             <div className="app-content">
@@ -60,7 +60,7 @@ const App = () => {
                 <Route path="/track/bus/:busId" element={<SingleBusTracking />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
-                <Route path="/admin/login" element={<AdminLoginPage />} /> {/* New: Admin Login Route */}
+                <Route path="/admin/login" element={<AdminLoginPage />} /> 
               </Routes>
             </div>
           </div>

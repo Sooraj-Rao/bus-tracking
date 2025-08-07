@@ -3,20 +3,20 @@ const router = express.Router();
 const User = require('../models/user');
 const OTP = require('../models/otp');
 const sendEmail = require('../utils/sendEmail');
-const bcrypt = require('bcryptjs'); // Import bcryptjs
-const jwt = require('jsonwebtoken'); // Import jsonwebtoken
+const bcrypt = require('bcryptjs'); 
+const jwt = require('jsonwebtoken'); 
 const dotenv = require('dotenv');
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET; // Get JWT secret from .env
+const JWT_SECRET = process.env.JWT_SECRET; 
 
-// Utility to generate OTP
+
 const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    return Math.floor(100000 + Math.random() * 900000).toString(); 
 };
 
-// Middleware to protect user routes (optional, but good practice for user-specific data)
-const protectUserRoute = (req, res, next) => {
+
+ const protectUserRoute = (req, res, next) => {
     const token = req.headers['x-auth-token'];
 
     if (!token) {
@@ -25,36 +25,36 @@ const protectUserRoute = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded; // Attach user info to request
+        req.user = decoded; 
         next();
     } catch (error) {
         res.status(401).json({ message: 'Token is not valid.' });
     }
 };
 
-// Register User - Step 1: Send OTP
+
 router.post('/register', async (req, res) => {
     try {
         const { userName, email, password } = req.body;
 
-        // Check if user already exists
+        
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ message: 'User with this email already exists.' });
         }
 
-        // Generate OTP
+        
         const otp = generateOTP();
-        const hashedOtp = await bcrypt.hash(otp, 10); // Hash OTP for storage
+        const hashedOtp = await bcrypt.hash(otp, 10); 
 
-        // Save OTP to database, replacing any existing one for this email
+        
         await OTP.findOneAndUpdate(
             { email },
             { otp: hashedOtp, createdAt: Date.now() },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );
 
-        // Send OTP via email
+        
         const subject = 'Your OTP for BusTracker Pro Registration';
         const html = `
             <h2>Hello ${userName},</h2>
@@ -73,7 +73,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Register User - Step 2: Verify OTP and complete registration
+
 router.post('/verify-otp', async (req, res) => {
     try {
         const { userName, email, password, otp } = req.body;
@@ -90,7 +90,7 @@ router.post('/verify-otp', async (req, res) => {
             return res.status(400).json({ message: 'Invalid OTP.' });
         }
 
-        // OTP is valid and not expired, proceed with user registration
+        
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             userName,
@@ -99,10 +99,10 @@ router.post('/verify-otp', async (req, res) => {
         });
         await newUser.save();
 
-        // Delete the OTP record after successful verification
+        
         await OTP.deleteOne({ email });
 
-        // Generate JWT for the newly registered user
+        
         const token = jwt.sign({ id: newUser._id, email: newUser.email, userName: newUser.userName }, JWT_SECRET, { expiresIn: '1h' });
 
         res.status(201).json({ message: 'Registration successful! You can now log in.', token, user: { id: newUser._id, userName: newUser.userName, email: newUser.email } });
@@ -112,7 +112,7 @@ router.post('/verify-otp', async (req, res) => {
     }
 });
 
-// Login User
+
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -127,7 +127,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials.' });
         }
 
-        // Generate JWT for the logged-in user
+        
         const token = jwt.sign({ id: user._id, email: user.email, userName: user.userName }, JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({ message: 'Login successful!', token, user: { id: user._id, userName: user.userName, email: user.email } });
@@ -137,10 +137,10 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Get current user (for AuthContext to verify token)
+
 router.get('/me', protectUserRoute, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password'); // Exclude password
+        const user = await User.findById(req.user.id).select('-password'); 
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }

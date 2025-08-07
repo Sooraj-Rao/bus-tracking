@@ -4,10 +4,10 @@ const bookingSchema = new mongoose.Schema({
   userName: String,
   contact: Number,
   email: String,
-  userId: { // New field for user ID
+  userId: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: false, // Make it optional for now, can be required later
+    required: false, 
   },
   busId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -28,8 +28,8 @@ const bookingSchema = new mongoose.Schema({
     enum: ["confirmed", "in-transit", "completed", "cancelled"],
     default: "confirmed",
   },
-  estimatedDuration: Number, // in minutes
-  estimatedDistance: Number, // in km
+  estimatedDuration: Number, 
+  estimatedDistance: Number, 
   createdAt: {
     type: Date,
     default: Date.now,

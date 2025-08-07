@@ -20,10 +20,10 @@ const busSchema = new mongoose.Schema({
   routeName: String,
   contact: Number,
   currentLocation: gpsSchema,
-  route: [gpsSchema], // Historical positions
-  routeWaypoints: [waypointSchema], // Fixed route path
-  routeProgress: { type: Number, default: 0 }, // Progress along route (0-1)
-  direction: { type: Number, default: 1 }, // 1 for forward, -1 for backward
+  route: [gpsSchema], 
+  routeWaypoints: [waypointSchema], 
+  routeProgress: { type: Number, default: 0 }, 
+  direction: { type: Number, default: 1 }, 
   startPoint: {
     lat: Number,
     lng: Number,

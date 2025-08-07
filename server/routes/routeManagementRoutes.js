@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const Route = require("../models/route")
 
-// Get all routes
+
 router.get("/", async (req, res) => {
   try {
     const routes = await Route.find().sort({ routeName: 1 })
@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
   }
 })
 
-// Create a new route
+
 router.post("/", async (req, res) => {
   try {
     const { routeName, waypoints } = req.body
@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Route name and at least two waypoints are required." })
     }
 
-    // Ensure waypoints have order property
+    
     const orderedWaypoints = waypoints.map((wp, index) => ({ ...wp, order: index }))
 
     const newRoute = new Route({ routeName, waypoints: orderedWaypoints })
@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
   }
 })
 
-// Get a single route by ID
+
 router.get("/:id", async (req, res) => {
   try {
     const route = await Route.findById(req.params.id)
@@ -47,7 +47,7 @@ router.get("/:id", async (req, res) => {
   }
 })
 
-// Update a route
+
 router.put("/:id", async (req, res) => {
   try {
     const { routeName, waypoints } = req.body
@@ -74,7 +74,7 @@ router.put("/:id", async (req, res) => {
   }
 })
 
-// Delete a route
+
 router.delete("/:id", async (req, res) => {
   try {
     const deletedRoute = await Route.findByIdAndDelete(req.params.id)

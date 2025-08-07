@@ -4,8 +4,8 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useNotification } from "../../components/NotificationProvider/NotificationProvider"
-import { useAuth } from "../../context/AuthContext" // Import useAuth
-import "./Auth.css" // Reusing Auth.css for both login/register
+import { useAuth } from "../../context/AuthContext"
+import "./Auth.css" 
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -18,7 +18,7 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const { showSuccess, showError } = useNotification()
-  const { login } = useAuth() // Get login function from AuthContext
+  const { login } = useAuth() 
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -48,7 +48,7 @@ const RegisterPage = () => {
     setLoading(true)
     try {
       const res = await axios.post("http://localhost:5000/api/auth/verify-otp", { ...form, otp })
-      login(res.data.token, res.data.user); // Use AuthContext login function
+      login(res.data.token, res.data.user);
       showSuccess("Success!", "Account created and verified. You can now log in.")
       navigate("/login")
     } catch (error) {

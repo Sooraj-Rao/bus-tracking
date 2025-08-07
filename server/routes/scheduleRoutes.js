@@ -2,29 +2,39 @@ const express = require("express");
 const router = express.Router();
 const Schedule = require("../models/Schedule");
 const Bus = require("../models/Bus");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+const Booking = require("../models/Booking");
+dotenv.config();
 
-// Get all schedules
-router.get("/", async (req, res) => {
+const protectUserRoute = (req, res, next) => {
+  const token = req.headers["x-auth-token"];
+
+  if (!token) {
+    return res.status(401).json({ message: "No token, authorization denied." });
+  }
+
   try {
-    const { date, route } = req.query;
-    const query = {};
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: "Token is not valid." });
+  }
+};
 
-    if (date) {
-      query.date = new Date(date);
-    }
-
-    if (route && route !== "all") {
-      query.routeName = route;
-    }
-
-    const schedules = await Schedule.find(query).populate("busId");
+router.get("/", protectUserRoute, async (req, res) => {
+  try {
+    const schedules = await Booking.find({ userId: req.user.id }).populate(
+      "busId"
+    );
     res.json(schedules);
   } catch (error) {
     res.status(500).json({ message: "Error fetching schedules", error });
   }
 });
 
-// Create new schedule
 router.post("/", async (req, res) => {
   try {
     const schedule = new Schedule(req.body);
@@ -35,7 +45,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update schedule
 router.put("/:id", async (req, res) => {
   try {
     const schedule = await Schedule.findByIdAndUpdate(req.params.id, req.body, {
@@ -50,7 +59,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete schedule
 router.delete("/:id", async (req, res) => {
   try {
     const schedule = await Schedule.findByIdAndDelete(req.params.id);

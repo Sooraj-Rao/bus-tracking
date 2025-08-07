@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // Import useAuth
+import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, isAdmin, isAuthenticated, logout } = useAuth(); // Get auth state and logout function
+  const { user, isAdmin, isAuthenticated, logout } = useAuth();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -83,7 +83,7 @@ const Navbar = () => {
               </li> */}
             </>
           )}
-          {isAdmin && ( // Only show Admin link if admin is logged in
+          {isAdmin && (
             <li>
               <Link
                 to="/admin"

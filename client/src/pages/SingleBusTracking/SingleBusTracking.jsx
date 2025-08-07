@@ -15,7 +15,6 @@ import { useNotification } from "../../components/NotificationProvider/Notificat
 import "leaflet/dist/leaflet.css";
 import "./SingleBusTracking.css";
 
-// Fix for default markers
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -24,7 +23,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
 });
 
-// Custom icons for start and end points
 const startIcon = new L.Icon({
   iconUrl:
     "data:image/svg+xml;base64," +
@@ -71,22 +69,20 @@ const SingleBusTracking = () => {
   useEffect(() => {
     let interval;
     if (isTracking && bus) {
-      interval = setInterval(fetchBusData, 5000); // Auto-refresh every 5 seconds
+      interval = setInterval(fetchBusData, 5000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isTracking, busId, bus]); // Added bus to dependency array to re-evaluate interval if bus data changes
+  }, [isTracking, busId, bus]);
 
   const fetchData = async () => {
     try {
-      // Fetch bus data
       const busRes = await axios.get(
         `http://localhost:5000/api/buses/${busId}`
       );
       setBus(busRes.data);
 
-      // Fetch booking data if bookingId is provided
       if (bookingId) {
         const bookingRes = await axios.get(
           `http://localhost:5000/api/bookings/${bookingId}`
@@ -94,9 +90,8 @@ const SingleBusTracking = () => {
         setBooking(bookingRes.data.booking);
       }
 
-      // Update route history
       if (busRes.data.route && busRes.data.route.length > 0) {
-        setRouteHistory(busRes.data.route.slice(-10)); // Keep last 10 points for history
+        setRouteHistory(busRes.data.route.slice(-10));
       }
 
       setError(null);
@@ -116,9 +111,8 @@ const SingleBusTracking = () => {
 
       setBus(busData);
 
-      // Update route history with recent positions
       if (busData.route && busData.route.length > 0) {
-        setRouteHistory(busData.route.slice(-10)); // Keep last 10 points for history
+        setRouteHistory(busData.route.slice(-10));
       }
     } catch (err) {
       console.error("Error fetching bus data:", err);
@@ -143,12 +137,10 @@ const SingleBusTracking = () => {
   const calculateProgress = () => {
     if (!bus || !bus.routeWaypoints || bus.routeWaypoints.length < 2) return 0;
 
-    // If booking exists, calculate progress based on booking's specific route
     if (booking && booking.fromLocation && booking.toLocation) {
       const fromStop = booking.fromLocation;
       const toStop = booking.toLocation;
 
-      // Find indices of from and to stops in the bus's full routeWaypoints
       const fromIndex = bus.routeWaypoints.findIndex(
         (wp) => wp.name === fromStop.name
       );
@@ -158,7 +150,6 @@ const SingleBusTracking = () => {
 
       if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return 0;
 
-      // Extract the relevant segment of the route for the booking
       const relevantWaypoints = bus.routeWaypoints.slice(
         Math.min(fromIndex, toIndex),
         Math.max(fromIndex, toIndex) + 1
@@ -168,7 +159,6 @@ const SingleBusTracking = () => {
         calculateDistanceBetweenWaypoints(relevantWaypoints);
       if (totalBookingDistance === 0) return 0;
 
-      // Find the closest point on the booking's route segment to the current bus location
       let closestPointOnRoute = null;
       let minDistanceToRoute = Infinity;
       let progressAlongBookingRoute = 0;
@@ -177,9 +167,8 @@ const SingleBusTracking = () => {
         const p1 = relevantWaypoints[i];
         const p2 = relevantWaypoints[i + 1];
 
-        // Project current bus location onto the segment (p1, p2)
         const segmentLengthSq = (p2.lat - p1.lat) ** 2 + (p2.lng - p1.lng) ** 2;
-        if (segmentLengthSq === 0) continue; // Points are the same
+        if (segmentLengthSq === 0) continue;
 
         const t =
           ((bus.currentLocation.lat - p1.lat) * (p2.lat - p1.lat) +
@@ -201,7 +190,6 @@ const SingleBusTracking = () => {
           minDistanceToRoute = distToProjected;
           closestPointOnRoute = { lat: projectedLat, lng: projectedLng };
 
-          // Calculate distance from start of booking route to projected point
           let distToProjectedFromBookingStart = 0;
           for (let j = 0; j < i; j++) {
             distToProjectedFromBookingStart += calculateDistance(
@@ -223,13 +211,12 @@ const SingleBusTracking = () => {
       }
       return Math.round(progressAlongBookingRoute);
     } else {
-      // If no booking, use the bus's overall route progress
       return Math.round((bus.routeProgress || 0) * 100);
     }
   };
 
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
-    const R = 6371; // Earth's radius in km
+    const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLng = ((lng2 - lng1) * Math.PI) / 180;
     const a =
@@ -300,16 +287,13 @@ const SingleBusTracking = () => {
     );
   }
 
-  // Prepare route coordinates for visualization
   let routeCoordinates = [];
   let startPoint = null;
   let endPoint = null;
 
   if (booking && booking.fromLocation && booking.toLocation) {
-    // Show user's specific route (from booking)
     startPoint = booking.fromLocation;
     endPoint = booking.toLocation;
-    // Find the segment of the bus's full route that corresponds to the booking
     const fromIndex = bus.routeWaypoints.findIndex(
       (wp) => wp.name === startPoint.name
     );
@@ -318,7 +302,6 @@ const SingleBusTracking = () => {
     );
 
     if (fromIndex !== -1 && toIndex !== -1) {
-      // Ensure waypoints are ordered correctly for the polyline
       const orderedWaypoints = [...bus.routeWaypoints].sort(
         (a, b) => a.order - b.order
       );
@@ -335,7 +318,6 @@ const SingleBusTracking = () => {
             .slice(startIndex, endIndex + 1)
             .map((point) => [point.lat, point.lng]);
         } else {
-          // Case where destination is before origin in the full route (e.g., return journey)
           routeCoordinates = orderedWaypoints
             .slice(endIndex, startIndex + 1)
             .reverse()
@@ -343,14 +325,12 @@ const SingleBusTracking = () => {
         }
       }
     } else {
-      // Fallback if booking stops not found in bus routeWaypoints
       routeCoordinates = [
         [booking.fromLocation.lat, booking.fromLocation.lng],
         [booking.toLocation.lat, booking.toLocation.lng],
       ];
     }
   } else {
-    // Fallback to full bus route if no booking or booking data is incomplete
     const routeWaypoints = bus.routeWaypoints || [];
     routeCoordinates = routeWaypoints.map((point) => [point.lat, point.lng]);
     startPoint = bus.startPoint;
@@ -426,25 +406,6 @@ const SingleBusTracking = () => {
               </div>
 
               <div className="detail-row">
-                <span className="detail-label">Status</span>
-                <span
-                  className={`status-indicator ${
-                    isTracking ? "status-active" : "status-inactive"
-                  }`}
-                >
-                  {isTracking ? "🟢 Live Tracking" : "⏸️ Paused"}
-                </span>
-              </div>
-
-              <div className="detail-row">
-                <span className="detail-label">Current Location</span>
-                <span className="detail-value">
-                  {bus.currentLocation.lat.toFixed(4)},{" "}
-                  {bus.currentLocation.lng.toFixed(4)}
-                </span>
-              </div>
-
-              <div className="detail-row">
                 <span className="detail-label">Last Updated</span>
                 <span className="detail-value">
                   {new Date(bus.currentLocation.timestamp).toLocaleString()}
@@ -462,7 +423,7 @@ const SingleBusTracking = () => {
                 Last updated:{" "}
                 {new Date(bus.currentLocation.timestamp).toLocaleTimeString()}
                 {isTracking && (
-                  <span style={{ color: "#27ae60", marginLeft: "10px" }}>
+                  <span style={{  marginLeft: "10px" }}>
                     ● Auto-updating
                   </span>
                 )}
@@ -480,7 +441,6 @@ const SingleBusTracking = () => {
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               />
 
-              {/* Full route path or booking-specific path */}
               {routeCoordinates.length > 1 && (
                 <Polyline
                   positions={routeCoordinates}
@@ -490,7 +450,6 @@ const SingleBusTracking = () => {
                 />
               )}
 
-              {/* Recent traveled path */}
               {recentPath.length > 1 && (
                 <Polyline
                   positions={recentPath}
@@ -500,7 +459,6 @@ const SingleBusTracking = () => {
                 />
               )}
 
-              {/* Start point marker */}
               {startPoint && (
                 <Marker
                   position={[startPoint.lat, startPoint.lng]}
@@ -521,7 +479,6 @@ const SingleBusTracking = () => {
                 </Marker>
               )}
 
-              {/* End point marker */}
               {endPoint && (
                 <Marker position={[endPoint.lat, endPoint.lng]} icon={endIcon}>
                   <Popup>
@@ -539,7 +496,6 @@ const SingleBusTracking = () => {
                 </Marker>
               )}
 
-              {/* Current bus location */}
               <Marker
                 position={[bus.currentLocation.lat, bus.currentLocation.lng]}
               >

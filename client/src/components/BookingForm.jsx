@@ -15,7 +15,6 @@ const BookingForm = () => {
       setBuses(res.data);
     });
   }, []);
-// alla use data elli untu?login admele
   const handlesubmit = async (e) => {
     e.preventDefault();
     const res=await axios.post('http://localhost:5000/api/bookings', form);

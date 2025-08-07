@@ -3,37 +3,36 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { useNotification } from "../../components/NotificationProvider/NotificationProvider"
-import { useAuth } from "../../context/AuthContext" // Import useAuth
+import { useAuth } from "../../context/AuthContext" 
 import "./Booking.css"
 
 const Booking = () => {
-  const { user, isAuthenticated } = useAuth() // Get user and isAuthenticated from AuthContext
+  const { user, isAuthenticated } = useAuth() 
   const [buses, setBuses] = useState([])
   const [selectedBus, setSelectedBus] = useState("")
-  const [availableStops, setAvailableStops] = useState([]) // Dynamically populated
+  const [availableStops, setAvailableStops] = useState([]) 
   const [form, setForm] = useState({
-    userName: user?.userName || "", // Pre-fill if user is logged in
+    userName: user?.userName || "", 
     contact: "",
-    email: user?.email || "", // Pre-fill if user is logged in
+    email: user?.email || "",
     busId: "",
     fromLocation: "",
     toLocation: "",
   })
-  const [userBookings, setUserBookings] = useState([]); // New state for user's bookings
+  const [userBookings, setUserBookings] = useState([]); 
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState("")
   const [routePreview, setRoutePreview] = useState(null)
-  const { showSuccess, showError, showInfo } = useNotification()
+  const { showSuccess, showError } = useNotification()
 
   useEffect(() => {
     fetchBuses()
     if (isAuthenticated && user?.id) {
       fetchUserBookings(user.id);
     }
-  }, [isAuthenticated, user?.id]) // Re-fetch if auth status or user ID changes
+  }, [isAuthenticated, user?.id]) 
 
   useEffect(() => {
-    // Update form fields if user data changes (e.g., after login)
     setForm((prevForm) => ({
       ...prevForm,
       userName: user?.userName || "",
@@ -46,7 +45,6 @@ const Booking = () => {
     if (selectedBus) {
       const bus = buses.find((b) => b._id === selectedBus)
       if (bus && bus.routeWaypoints && bus.routeWaypoints.length > 0) {
-        // Sort waypoints by order to ensure correct sequence
         const sortedWaypoints = [...bus.routeWaypoints].sort((a, b) => a.order - b.order)
         setAvailableStops(sortedWaypoints)
       } else {
@@ -55,7 +53,6 @@ const Booking = () => {
     } else {
       setAvailableStops([])
     }
-    // Reset from/to locations when bus selection changes
     setForm((prevForm) => ({
       ...prevForm,
       fromLocation: "",
@@ -101,8 +98,7 @@ const Booking = () => {
 
     if (fromStop && toStop) {
       const distance = calculateDistance(fromStop.lat, fromStop.lng, toStop.lat, toStop.lng)
-      const estimatedTime = Math.round(distance * 3) // Rough estimate: 3 minutes per km
-
+      const estimatedTime = Math.round(distance * 3) 
       setRoutePreview({
         distance: distance.toFixed(1),
         estimatedTime: estimatedTime,
@@ -113,7 +109,7 @@ const Booking = () => {
   }
 
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
-    const R = 6371 // Earth's radius in km
+    const R = 6371
     const dLat = ((lat2 - lat1) * Math.PI) / 180
     const dLng = ((lng2 - lng1) * Math.PI) / 180
     const a =
@@ -135,8 +131,8 @@ const Booking = () => {
     setForm({
       ...form,
       busId: busId,
-      fromLocation: "", // Reset locations when bus changes
-      toLocation: "", // Reset locations when bus changes
+      fromLocation: "",
+      toLocation: "", 
     })
     setRoutePreview(null)
   }
@@ -181,7 +177,7 @@ const Booking = () => {
         estimatedDuration: routePreview?.estimatedTime || 0,
       }
 
-      const token = localStorage.getItem('userToken'); // Get user token
+      const token = localStorage.getItem('userToken'); 
       const res = await axios.post("http://localhost:5000/api/bookings", bookingData, {
         headers: { 'x-auth-token': token }
       })
@@ -208,7 +204,6 @@ const Booking = () => {
 
       showSuccess("Booking Confirmed!", "Check your email for tracking details")
 
-      // Reset form
       setForm({
         userName: user?.userName || "",
         contact: "",
@@ -220,7 +215,7 @@ const Booking = () => {
       setSelectedBus("")
       setRoutePreview(null)
       if (isAuthenticated && user?.id) {
-        fetchUserBookings(user.id); // Refresh user's bookings
+        fetchUserBookings(user.id); 
       }
     } catch (error) {
       console.error("Booking failed:", error)
@@ -291,7 +286,6 @@ const Booking = () => {
                       required
                     >
                       <option value="">Choose destination</option>
-                      {/* Filter out 'from' location from 'to' options */}
                       {availableStops
                         .filter((stop) => stop.name !== form.fromLocation)
                         .map((stop) => (
@@ -326,7 +320,7 @@ const Booking = () => {
                   value={form.userName}
                   onChange={handleInputChange}
                   required
-                  readOnly={isAuthenticated && user?.userName} // Make read-only if logged in
+                  readOnly={isAuthenticated && user?.userName} 
                 />
               </div>
 
@@ -353,7 +347,7 @@ const Booking = () => {
                   value={form.email}
                   onChange={handleInputChange}
                   required
-                  readOnly={isAuthenticated && user?.email} // Make read-only if logged in
+                  readOnly={isAuthenticated && user?.email} 
                 />
               </div>
 
