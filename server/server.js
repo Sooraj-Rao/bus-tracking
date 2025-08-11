@@ -15,6 +15,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const RunServer = require("./database/connection");
+const sendEmail = require("./utils/sendEmail");
 
 const app = express();
 const port = 5000;
@@ -29,6 +30,36 @@ app.get("/api/bookings/count", async (req, res) => {
   } catch (error) {
     console.error("Error fetching booking count:", error);
     res.status(500).json({ message: "Failed to fetch booking count." });
+  }
+});
+
+app.post("/api/contact", async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    const htmlData = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+        <h2 style="color: #007bff;">New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong></p>
+        <div style="background: #f9f9f9; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+          ${message.replace(/\n/g, "<br>")}
+        </div>
+        <hr style="margin-top: 20px;"/>
+        <small style="color: #888;">This message was sent from your BusTrack contact form.</small>
+      </div>
+    `;
+
+    await sendEmail(
+      "kshenoy254@gmail.com",
+      "New Contact Form Submission",
+      htmlData
+    );
+    res.status(200).json({ message: "Message sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error sending message" });
   }
 });
 

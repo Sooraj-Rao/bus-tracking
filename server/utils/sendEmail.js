@@ -12,7 +12,7 @@ const sendEmail=async(to,subject,html)=>{
             },
         }); 
         const mailOptions = {
-            from: `Bus Booking`,
+            from: `Bus Tracker App`,
             to,
             subject,
             html,
